@@ -95,48 +95,35 @@ getMLDSSID()
 }
 
 # Get iw mld0 info output for a specific link ID
-# Arg: linkId
+# Arg: linkId (passed as $4 -> $arg4)
 getMLDLinkInfo()
 {
-    linkId=$4
-    linkInfo=`iw $MLD_INTERFACE info | grep "link ID  $linkId"`
+    linkInfo=`iw $MLD_INTERFACE info | grep "link ID  $arg4"`
     echo $linkInfo
 }
 
+# Get link addr for a specific MLD link ID from iw mld0 info
+# Arg: linkId (passed as $4 -> $arg4)
 getMLDLinkAddr()
 {
     linkAddr=`iw $MLD_INTERFACE info | grep "link ID  $arg4 " | awk '{print $NF}'`
     echo $linkAddr
 }
 
+# Get channel number for a specific MLD link ID from iw mld0 info
+# Arg: linkId (passed as $4 -> $arg4)
 getMLDLinkChannel()
 {
     linkChannel=`iw $MLD_INTERFACE info | awk "/- link ID  $arg4 /{found=1} found && /channel/{print \$2; found=0}" | head -1`
     echo $linkChannel
 }
 
+# Get HWaddr of a given radio interface (e.g. wifi0, wifi1, wifi2) from ifconfig
+# Arg: radioInterface (passed as $4 -> $arg4)
 getRadioIfHWAddr()
 {
     hwaddr=`ifconfig $arg4 | grep -i HWaddr | awk '{ print $5 }'`
     echo $hwaddr
-}
-
-# Get Channel for a given radio index (1-based) from dmcli
-# Arg: radioIndex
-getRadioChannel()
-{
-    radioIndex=$4
-    channel=`dmcli eRT getv Device.WiFi.Radio.$radioIndex.Channel | grep value | awk '{ print $NF }'`
-    echo $channel
-}
-
-# Get OperatingChannelBandwidth for a given radio index (1-based) from dmcli
-# Arg: radioIndex
-getRadioBandwidth()
-{
-    radioIndex=$4
-    bw=`dmcli eRT getv Device.WiFi.Radio.$radioIndex.OperatingChannelBandwidth | grep value | awk '{ print $NF }'`
-    echo $bw
 }
 
 # Invoke the function based on the argument passed
@@ -167,9 +154,6 @@ case $event in
         getMLDLinkChannel;;
    "getRadioIfHWAddr")
         getRadioIfHWAddr;;
-   "getRadioChannel")
-        getRadioChannel;;
-   "getRadioBandwidth")
-        getRadioBandwidth;;
    *) echo "Invalid Argument passed";;
 esac
+
