@@ -46,31 +46,11 @@ getQueryResult()
     echo $result
 }
 
-# Store the arguments to a variable
-event=$1
-processName=$2
-sleepTime=$2
-index=$3
-arg4=$4
-
-# Source platform properties
-PLATFORM_PROPERTIES=/etc/tdk_platform.properties
-if [ -f "$PLATFORM_PROPERTIES" ]; then
-    . $PLATFORM_PROPERTIES
-fi
-
 # Get the ip link show output for the MLD interface (WiFi 7 Multi-Link Device)
 getMLDInterfaceStatus()
 {
     mldStatus=`ip link show $MLD_INTERFACE | grep $MLD_INTERFACE`
     echo $mldStatus
-}
-
-# Get ip link show output for MLD interface including bridge and state info
-getMLDInterfaceBridgeStatus()
-{
-    bridgeStatus=`ip link show $MLD_INTERFACE | grep $MLD_INTERFACE`
-    echo $bridgeStatus
 }
 
 # Get HWaddr of MLD interface from ifconfig
@@ -126,6 +106,19 @@ getRadioIfHWAddr()
     echo $hwaddr
 }
 
+# Store the arguments to a variable
+event=$1
+processName=$2
+sleepTime=$2
+index=$3
+arg4=$4
+
+# Source platform properties
+PLATFORM_PROPERTIES=/etc/tdk_platform.properties
+if [ -f "$PLATFORM_PROPERTIES" ]; then
+    . $PLATFORM_PROPERTIES
+fi
+
 # Invoke the function based on the argument passed
 case $event in
    "checkProcess")
@@ -138,8 +131,6 @@ case $event in
         getQueryResult;;
    "getMLDInterfaceStatus")
         getMLDInterfaceStatus;;
-   "getMLDInterfaceBridgeStatus")
-        getMLDInterfaceBridgeStatus;;
    "getMLDIfconfigHWAddr")
         getMLDIfconfigHWAddr;;
    "getMLDIwAddr")
@@ -156,4 +147,3 @@ case $event in
         getRadioIfHWAddr;;
    *) echo "Invalid Argument passed";;
 esac
-
