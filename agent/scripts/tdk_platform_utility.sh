@@ -46,11 +46,78 @@ getQueryResult()
     echo $result
 }
 
+# Get the ip link show output for the MLD interface (WiFi 7 Multi-Link Device)
+getMLDInterfaceStatus()
+{
+    mldStatus=`ip link show $MLD_INTERFACE | grep $MLD_INTERFACE`
+    echo $mldStatus
+}
+
+# Get HWaddr of MLD interface from ifconfig
+getMLDIfconfigHWAddr()
+{
+    hwaddr=`ifconfig $MLD_INTERFACE | grep HWaddr | awk '{ print $5 }'`
+    echo $hwaddr
+}
+
+# Get addr of MLD interface from iw dev info
+getMLDIwAddr()
+{
+    iwaddr=`iw $MLD_INTERFACE info | grep "addr" | head -1 | awk '{ print $2 }'`
+    echo $iwaddr
+}
+
+# Get SSID configured on MLD interface from iw dev info
+getMLDSSID()
+{
+    ssid=`iw $MLD_INTERFACE info | grep ssid`
+    echo $ssid
+}
+
+# Get iw mld0 info output for a specific link ID
+# Arg: linkId (passed as $4 -> $arg4)
+getMLDLinkInfo()
+{
+    linkInfo=`iw $MLD_INTERFACE info | grep "link ID  $arg4"`
+    echo $linkInfo
+}
+
+# Get link addr for a specific MLD link ID from iw mld0 info
+# Arg: linkId (passed as $4 -> $arg4)
+getMLDLinkAddr()
+{
+    linkAddr=`iw $MLD_INTERFACE info | grep "link ID  $arg4 " | awk '{print $NF}'`
+    echo $linkAddr
+}
+
+# Get channel number for a specific MLD link ID from iw mld0 info
+# Arg: linkId (passed as $4 -> $arg4)
+getMLDLinkChannel()
+{
+    linkChannel=`iw $MLD_INTERFACE info | awk "/- link ID  $arg4 /{found=1} found && /channel/{print \$2; found=0}" | head -1`
+    echo $linkChannel
+}
+
+# Get HWaddr of a given radio interface (e.g. wifi0, wifi1, wifi2) from ifconfig
+# Arg: radioInterface (passed as $4 -> $arg4)
+getRadioIfHWAddr()
+{
+    hwaddr=`ifconfig $arg4 | grep -i HWaddr | awk '{ print $5 }'`
+    echo $hwaddr
+}
+
 # Store the arguments to a variable
 event=$1
 processName=$2
 sleepTime=$2
 index=$3
+arg4=$4
+
+# Source platform properties
+PLATFORM_PROPERTIES=/etc/tdk_platform.properties
+if [ -f "$PLATFORM_PROPERTIES" ]; then
+    . $PLATFORM_PROPERTIES
+fi
 
 # Invoke the function based on the argument passed
 case $event in
@@ -62,5 +129,21 @@ case $event in
         getCMMACAddress;;
    "getQueryResult")
         getQueryResult;;
+   "getMLDInterfaceStatus")
+        getMLDInterfaceStatus;;
+   "getMLDIfconfigHWAddr")
+        getMLDIfconfigHWAddr;;
+   "getMLDIwAddr")
+        getMLDIwAddr;;
+   "getMLDSSID")
+        getMLDSSID;;
+   "getMLDLinkInfo")
+        getMLDLinkInfo;;
+   "getMLDLinkAddr")
+        getMLDLinkAddr;;
+   "getMLDLinkChannel")
+        getMLDLinkChannel;;
+   "getRadioIfHWAddr")
+        getRadioIfHWAddr;;
    *) echo "Invalid Argument passed";;
 esac
