@@ -27,11 +27,11 @@ sleep 1
 source $TDK_PATH/Rdklogger_post-requisite.sh
 
 #Killing inactive TDK processes
-ps | grep "TDKagentMonitor" | grep -v "grep" | awk '{print $2}' | xargs kill -9 >& /dev/null
+ps | grep "TDKagentMonitor" | grep -v "grep" | awk '{print $1}' | xargs kill -9 >& /dev/null
 sleep 1
-ps | grep "tdk" | grep -v "grep" | awk '{print $2}' | xargs kill -9 >& /dev/null
-ps | grep "tftp" | grep -v "grep" | awk '{print $2}' | xargs kill -9 >& /dev/null
-ps | grep "tdk_firewall_service" | grep -v "grep" | awk '{print $2}' | xargs kill -9 >& /dev/null
+ps | grep "tdk" | grep -v "grep" | awk '{print $1}' | xargs kill -9 >& /dev/null
+ps | grep "tftp" | grep -v "grep" | awk '{print $1}' | xargs kill -9 >& /dev/null
+ps | grep "tdk_firewall_service" | grep -v "grep" | awk '{print $1}' | xargs kill -9 >& /dev/null
 sleep 2
 
 echo "Done"
